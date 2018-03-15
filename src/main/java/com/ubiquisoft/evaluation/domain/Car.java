@@ -3,6 +3,7 @@ package com.ubiquisoft.evaluation.domain;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -31,7 +32,38 @@ public class Car {
 		 *      }
 		 */
 
-		return null;
+		 Map<PartType, Integer> missingParts = new HashMap<PartType, Integer>();
+
+		 boolean engine = false;
+		 boolean electrical = false;
+		 boolean fuelFilter = false;
+		 boolean oilFilter = false;
+		 int tires = 0;
+
+		 // Check for required components
+		 // I feel there is a much more efficient way to do this
+		 for (Part part : parts) {
+			 engine = (part.getType() == PartType.ENGINE) ? true : engine;
+			 electrical = (part.getType() == PartType.ELECTRICAL) ? true : electrical;
+			 fuelFilter = (part.getType() == PartType.FUEL_FILTER) ? true : fuelFilter;
+			 oilFilter = (part.getType() == PartType.OIL_FILTER) ? true : oilFilter;
+			 if (part.getType() == PartType.TIRE) {
+			 	tires++;
+			 }
+		 }
+
+		 // Require 4 tires
+		 int tiresRequired = 4;
+		 int tiresMissing = tiresRequired - tires;
+
+		 // Create map of missing parts (require 1 each besides tires)
+		 if (!engine) missingParts.put(PartType.ENGINE, 1);
+		 if (!electrical) missingParts.put(PartType.ELECTRICAL, 1);
+		 if (!fuelFilter) missingParts.put(PartType.FUEL_FILTER, 1);
+		 if (!oilFilter) missingParts.put(PartType.OIL_FILTER, 1);
+		 if (tiresMissing > 0) missingParts.put(PartType.TIRE, tiresMissing);
+
+		return missingParts;
 	}
 
 	@Override
